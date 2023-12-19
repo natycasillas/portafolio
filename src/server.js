@@ -4,11 +4,10 @@ const { engine }  = require('express-handlebars')
 const methodOverride = require('method-override');
 const passport = require('passport');
 const session = require('express-session');
+const fileUpload = require('express-fileupload')
 // Inicializaciones
-require('./config/passport')
-
-
 const app = express()
+require('./config/passport')
 
 // Configuraciones 
 
@@ -25,10 +24,12 @@ app.set('view engine','.hbs')
 // Configuraciones 
 app.set('port',process.env.port || 3000)
 app.set('views',path.join(__dirname, 'views'))
-
+app.use(fileUpload({
+    useTempFiles : true,
+    tempFileDir : './uploads'
+}));
 // Middlewares 
 app.use(express.urlencoded({extended:false}))
-
 app.use(session({ 
     secret: 'secret',
     resave:true,
@@ -36,8 +37,7 @@ app.use(session({
 }));
 app.use(passport.initialize())
 app.use(passport.session())
-
-// Variables globales
+app.use(methodOverride('_method'))
 
 // Variables globales
 app.use((req,res,next)=>{
@@ -45,15 +45,11 @@ app.use((req,res,next)=>{
     next()
 })
 
-// Middlewares 
-app.use(methodOverride('_method'))
 
 
 // Rutas 
 app.use(require('./routers/index.routes'))
 app.use(require('./routers/portafolio.routes'))
-// Rutas 
-
 app.use(require('./routers/user.routes'))
 
 // Archivos estáticos
@@ -61,4 +57,3 @@ app.use(express.static(path.join(__dirname,'public')))
 
 
 module.exports = app
-

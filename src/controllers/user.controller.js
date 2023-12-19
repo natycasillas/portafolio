@@ -1,10 +1,8 @@
-//mostrar el formulario de registro
-
-
 const User = require('../models/User')
-
 const passport = require("passport")
-
+const renderRegisterForm =(req,res)=>{
+    res.render('user/registerForm')
+}
 
 const registerNewUser = async(req,res)=>{
     
@@ -20,26 +18,17 @@ const registerNewUser = async(req,res)=>{
     newUser.password = await newUser.encrypPassword(password)
     newUser.save()
     res.redirect('/user/login')
+    
 }
 
-
-
-const renderRegisterForm =(req,res)=>{
-    res.render('user/registerForm')
-}
-//capturar los datos del formulario
-
-//mostrar el formulario lo login
 const renderLoginForm =(req,res)=>{
     res.render('user/loginForm')
 }
-//capturar los datos del formulario y almacenar en bd 
-// Segunda forma utilizando el módulo passport
+
 const loginUser = passport.authenticate('local',{
     failureRedirect:'/user/login',
     successRedirect:'/portafolios'
 })
-
 
 const logoutUser =(req,res)=>{
     req.logout((err)=>{
